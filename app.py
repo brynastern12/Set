@@ -1,16 +1,22 @@
 from flask import Flask
 import requests
 from babel.dates import format_datetime
+from flask import Flask, render_template
 import datetime
 import pytz
 import dateutil.parser
 from setLogic1 import logic 
-from db import create_table
+#from db import create_table
 
 app = Flask(__name__)
 
+print("Static URL Path:", app.static_url_path)
+print("Static Folder:", app.static_folder)
+
+
+
 TIME_API_URL_Israel = 'https://timeapi.io/api/Time/current/zone?timeZone=Israel'
-TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=EST'
+TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=America/New_York'
 
 def get_israel_time():
     try:
@@ -84,7 +90,11 @@ def get_ny_date():
     except Exception as e:
         return None, f'Error: {e}'
 
-
+# data for card properties
+colors = ['red', 'green', 'blue']
+shapes = ['diamond', 'squiggle', 'oval']
+shadings = ['solid', 'striped', 'outlined']
+numbers = [1, 2, 3]
 
 @app.route('/')
 def hello():
@@ -97,9 +107,8 @@ def hello():
     <html>
     <head>
         <title>Set Game</title>
-        
-
-
+        <!-- CSS link -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='cards.css') }}">
     </head>
     <body>
         <h1>Set Game</h1>
@@ -125,14 +134,21 @@ def hello():
     </html>
     '''
 
+# Define route to render game page
 @app.route('/mylogic')
 def my_logic():
-    return logic()
 
-@app.route('/create_table')
-def create_table_route():
-    create_table()  # Call the function from db.py to create the table
-    return 'Table created successfully!'
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Generate cards dynamically
+    cards = []
+    for color in colors:
+        for shape in shapes:
+            for shading in shadings:
+                for number in numbers:
+                    card = {
+                        'color': color,
+                        'shape': shape,
+                        'shading': shading,
+                        'number': number
+                    }
+                    cards.append(card)
+    return render_template('mylogic.html', cards=cards)
