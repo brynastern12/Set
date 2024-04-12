@@ -1,16 +1,17 @@
 from flask import Flask
+from flask import Flask, render_template
 import requests
 from babel.dates import format_datetime
 import datetime
 import pytz
 import dateutil.parser
 from setLogic1 import logic 
-from db import create_table
+from db import get_db_connection, create_table
 
 app = Flask(__name__)
 
 TIME_API_URL_Israel = 'https://timeapi.io/api/Time/current/zone?timeZone=Israel'
-TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=EST'
+TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=America/New_York'
 
 def get_israel_time():
     try:
@@ -85,6 +86,19 @@ def get_ny_date():
         return None, f'Error: {e}'
 
 
+def fetch_user_high_scores():
+    # Connect to the database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Fetch data from the 'Users' table
+    cursor.execute('SELECT Name, HighScore FROM Users')
+    rows = cursor.fetchall()
+
+    # Close the database connection
+    conn.close()
+
+    return rows
 
 @app.route('/')
 def hello():
@@ -112,14 +126,8 @@ def hello():
             <!-- Hotels list will go here-->
         </ul>
         <h2>Welcome to the fun</h2>
-        <form method="POST" action="/add">
-            <label for="hotelsCity">City:</label>
-            <input type="text" name="hotelsCity" required><br>
-            <label for="hotelsName">Name:</label>
-            <input type="text" name="hotelsName" required><br>
-            <label for="hotelsStars">Amount of Stars:</label>
-            <input type="number" name="hotelsStars" value="4" min="0" max="5" step="1" required><br>
-            <button type="submit">Add Hotel</button>
+        <form method="GET" action="/display_high_scores">
+            <button type="submit">Display High Scores</button>
         </form>
     </body>
     </html>
@@ -129,10 +137,14 @@ def hello():
 def my_logic():
     return logic()
 
-@app.route('/create_table')
-def create_table_route():
-    create_table()  # Call the function from db.py to create the table
-    return 'Table created successfully!'
+
+# Route for displaying high scores and creating the table
+@app.route('/display_high_scores')
+def display_high_scores():
+    # Fetch user high scores from the database
+    rows = fetch_user_high_scores()
+    # Render the template with the fetched data
+    return render_template('high_scores.html', rows=rows)
 
 if __name__ == '__main__':
     app.run(debug=True)
