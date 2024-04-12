@@ -106,33 +106,9 @@ def hello():
     israel_date = get_israel_date()
     ny_time = get_ny_time()
     ny_date = get_ny_date()
-    return f'''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Set Game</title>
-        
+    return render_template('home.html', israel_time=israel_time, israel_date=israel_date, ny_time=ny_time, ny_date=ny_date)
 
-
-    </head>
-    <body>
-        <h1>Set Game</h1>
-        <p>Current time in Israel: {israel_time[0] if not israel_time[1] else israel_time[1]}</p>
-        <p>Current date in Israel: {israel_date[0] if not israel_date[1] else israel_date[1]}</p>
-        <p>Current time in NY: {ny_time[0] if not ny_time[1] else ny_time[1]}</p>
-        <p>Current date in NY: {ny_date[0] if not ny_date[1] else ny_date[1]}</p>
-        
-        <ul>
-            <!-- Hotels list will go here-->
-        </ul>
-        <h2>Welcome to the fun</h2>
-        <form method="GET" action="/display_high_scores">
-            <button type="submit">Display High Scores</button>
-        </form>
-    </body>
-    </html>
-    '''
-
+    
 @app.route('/mylogic')
 def my_logic():
     return logic()
