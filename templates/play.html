@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Grid</title>
+    <title>Set Game</title>
     <style>
+	    .grid-container-box {
+			border: 2px solid #f0f0f0;; /* Add a border with black color */
+			border-bottom: none; /* Remove bottom border */
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect on bottom */
+			padding: 10px; /* Add padding to create space between the border and the grid */
+			max-width: 600px; /* Optionally, set a maximum width for the container */
+			margin: 0 auto; /* Center the container horizontally */
+			border-radius: 10px; /* Rounded corners */
+
+		}
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -13,18 +23,49 @@
         .grid-item img {
             width: 100%;
             height: auto;
-            border: 2px solid black; /* Add a black border */
+            border: 2px solid gray; /* Add a gray border */
             border-radius: 5px; /* Optionally, add border radius for rounded corners */
         }
+        .grid-item img.selected {
+            border-color: purple; /* Change border color to indicate selection */
+			box-shadow: 0 0 10px rgba(0, 0, 0, 1.0); /* Add shadow effect */
+
+        }
     </style>
+	<script>
+		var selectedCount = 0; // Variable to keep track of selected cards count
+
+		function toggleSelection(event) {
+			event.preventDefault(); // Prevent the default link behavior
+			var image = event.target; // Get the clicked image element
+			
+			// Check if less than 3 images are selected or if the clicked image is already selected
+			if (selectedCount < 3 || image.classList.contains('selected')) {
+				// Toggle the 'selected' class on the clicked image
+				image.classList.toggle('selected');
+				// Update the selected count based on the current state of the clicked image
+				selectedCount += image.classList.contains('selected') ? 1 : -1;
+			} else {
+				alert("You can only select up to 3 images."); // Show an alert if trying to select more than 3 images
+			}
+		}
+	</script>
+
 </head>
 <body>
-    <div class="grid-container">
-        {% for image_url in image_urls %}
-            <div class="grid-item">
-                <img src="{{ url_for('static', filename=image_url) }}" alt="Image">
-            </div>
-        {% endfor %}
+    <h1>Set Game</h1>
+    <div class="grid-container-box">
+        <div class="grid-container">
+            {% for image_url in image_urls %}
+                <div class="grid-item">
+                    <a href="#" onclick="toggleSelection(event)">
+                        <img src="{{ url_for('static', filename=image_url) }}" alt="Image">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </body>
+
+
 </html>
