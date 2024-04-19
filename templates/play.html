@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Grid</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .grid-item img {
+            width: 100%;
+            height: auto;
+            border: 2px solid black; /* Add a black border */
+            border-radius: 5px; /* Optionally, add border radius for rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        {% for image_url in image_urls %}
+            <div class="grid-item">
+                <img src="{{ url_for('static', filename=image_url) }}" alt="Image">
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
