@@ -3,11 +3,48 @@
 <head>
     <title>My Flask App</title>
     <!-- Include any necessary CSS or stylesheets here -->
+    <style>
+        #stopwatch {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Let's Play Set!</h1>
 	<form method="GET" action="/">
 		<button type="submit">Return to Home Page</button>
 	</form>
+
+    <!-- Stopwatch -->
+    <div id="stopwatch">00:00:00</div>
+
+    <!-- Include the JavaScript for the stopwatch -->
+    <script>
+        // Function to start the stopwatch
+        function startStopwatch() {
+            var startTime = Date.now(); // Get the current time in milliseconds
+
+            // Update the stopwatch display every 100 milliseconds
+            var intervalId = setInterval(function() {
+                var elapsedTime = Date.now() - startTime; // Calculate elapsed time
+                var hours = Math.floor(elapsedTime / (1000 * 60 * 60)); // Convert milliseconds to hours
+                var minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60)); // Convert milliseconds to minutes
+                var seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000); // Convert milliseconds to seconds
+
+                // Format the time string (add leading zeros if necessary)
+                var timeString = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2);
+
+                // Update the stopwatch display
+                document.getElementById('stopwatch').textContent = timeString;
+            }, 100); // Update every 100 milliseconds
+
+            // Return the interval ID so it can be stopped later if needed
+            return intervalId;
+        }
+
+        // Start the stopwatch when the page loads
+        var intervalId = startStopwatch();
+    </script>
 </body>
 </html>
