@@ -5,7 +5,6 @@ from babel.dates import format_datetime
 import datetime
 import pytz
 import dateutil.parser
-from setLogic1 import logic 
 from db import get_db_connection, create_table
 
 app = Flask(__name__)
@@ -109,9 +108,6 @@ def hello():
     return render_template('home.html', israel_time=israel_time, israel_date=israel_date, ny_time=ny_time, ny_date=ny_date)
 
     
-@app.route('/mylogic')
-def my_logic():
-    return logic()
 @app.route('/play')
 def play_game():
     # You can render a template for the play page or redirect to another page
