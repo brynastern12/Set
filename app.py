@@ -4,6 +4,7 @@ from babel.dates import format_datetime
 from flask import Flask, render_template
 import datetime
 import pytz
+import random
 import dateutil.parser
 from setLogic1 import logic 
 #from db import create_table
@@ -135,20 +136,94 @@ def hello():
     '''
 
 # Define route to render game page
-@app.route('/mylogic')
+@app.route('/play')
 def my_logic():
 
-    # Generate cards dynamically
-    cards = []
-    for color in colors:
-        for shape in shapes:
-            for shading in shadings:
-                for number in numbers:
-                    card = {
-                        'color': color,
-                        'shape': shape,
-                        'shading': shading,
-                        'number': number
-                    }
-                    cards.append(card)
-    return render_template('mylogic.html', cards=cards)
+   # You will populate image_urls here
+    all_image_urls = [
+        "BEC1.jpg",
+        "BEC2.jpg",
+        "BEC3.jpg",
+        "BEP1.jpg",
+        "BEP2.jpg",
+        "BEP3.jpg",
+        "BES1.jpg",
+        "BES2.jpg",
+        "BES3.jpg",
+        "BFC1.jpg",
+        "BFC2.jpg",
+        "BFC3.jpg",
+        "BFP1.jpg",
+        "BFP2.jpg",
+        "BFP3.jpg",
+        "BFS1.jpg",
+        "BFS2.jpg",
+        "BFS3.jpg",
+        "BSC1.jpg",
+        "BSC2.jpg",
+        "BSC3.jpg",
+        "BSP1.jpg",
+        "BSP2.jpg",
+        "BSP3.jpg",
+        "BSS1.jpg",
+        "BSS2.jpg",
+        "BSS3.jpg", 
+        "REC1.jpg",
+        "REC2.jpg",
+        "REC3.jpg",
+        "REP1.jpg",
+        "REP2.jpg",
+        "REP3.jpg",
+        "RES1.jpg",
+        "RES2.jpg",
+        "RES3.jpg",
+        "RFC1.jpg",
+        "RFC2.jpg",
+        "RFC3.jpg",
+        "RFP1.jpg",
+        "RFP2.jpg",
+        "RFP3.jpg",
+        "RFS1.jpg",
+        "RFS2.jpg",
+        "RFS3.jpg",
+        "RSC1.jpg",
+        "RSC2.jpg",
+        "RSC3.jpg",
+        "RSP1.jpg",
+        "RSP2.jpg",
+        "RSP3.jpg",
+        "RSS1.jpg",
+        "RSS2.jpg",
+        "RSS3.jpg",  
+        "YEC1.jpg",
+        "YEC2.jpg",
+        "YEC3.jpg",
+        "YEP1.jpg",
+        "YEP2.jpg",
+        "YEP3.jpg",
+        "YES1.jpg",
+        "YES2.jpg",
+        "YES3.jpg",
+        "YFC1.jpg",
+        "YFC2.jpg",
+        "YFC3.jpg",
+        "YFP1.jpg",
+        "YFP2.jpg",
+        "YFP3.jpg",
+        "YFS1.jpg",
+        "YFS2.jpg",
+        "YFS3.jpg",
+        "YSC1.jpg",
+        "YSC2.jpg",
+        "YSC3.jpg",
+        "YSP1.jpg",
+        "YSP2.jpg",
+        "YSP3.jpg",
+        "YSS1.jpg",
+        "YSS2.jpg",
+        "YSS3.jpg"         
+    ]
+    image_urls = ['images/' + name for name in all_image_urls]
+    # Select a random sample of 12 images
+    random_image_urls = random.sample(image_urls, 12)
+    return render_template('play.html', image_urls=random_image_urls)
