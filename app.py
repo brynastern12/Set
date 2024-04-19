@@ -84,20 +84,34 @@ def get_ny_date():
     except Exception as e:
         return None, f'Error: {e}'
 
-
 def fetch_user_high_scores():
     # Connect to the database
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Fetch data from the 'Users' table
-    cursor.execute('SELECT Name, HighScore FROM Users')
+    cursor.execute('SELECT Name, Time, Date FROM Users')  # Assuming 'Time' column contains time data
     rows = cursor.fetchall()
+
+    # Format the time data to display only minutes and seconds
+    formatted_rows = [(name, format_time(time), date) for name, time, date in rows]
 
     # Close the database connection
     conn.close()
 
-    return rows
+    return formatted_rows
+def format_time(time):
+    try:
+        # Split the time string into components
+        components = time.split(':')
+        # Extract minutes and seconds
+        minutes = int(components[0])
+        seconds = int(components[1])
+        # Return formatted time as 'MM:SS'
+        return f"{minutes:02d}:{seconds:02d}"
+    except ValueError:
+        return '00:00'  # Return default value if time format is invalid
+
 
 @app.route('/')
 def hello():
@@ -112,17 +126,18 @@ def hello():
 def play_game():
     # You can render a template for the play page or redirect to another page
     return render_template('play.html') 
+    def stopwatch():
+        return render_template('stopwatch.html')
 
 
-# Route for displaying high scores and creating the table
 @app.route('/display_high_scores')
 def display_high_scores():
     # Fetch user high scores from the database
     rows = fetch_user_high_scores()
-    # Sort the rows by the second element (the high score) in descending order
-    rows.sort(key=lambda x: x[1], reverse=True)
-    # Render the template with the sorted data
+
+    # Render the template with the retrieved data
     return render_template('high_scores.html', rows=rows)
+
 
 
 if __name__ == '__main__':
