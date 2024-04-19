@@ -112,6 +112,11 @@ def hello():
 @app.route('/mylogic')
 def my_logic():
     return logic()
+@app.route('/play')
+def play_game():
+    # You can render a template for the play page or redirect to another page
+    return render_template('play.html') 
+
 
 # Route for displaying high scores and creating the table
 @app.route('/display_high_scores')
@@ -122,6 +127,7 @@ def display_high_scores():
     rows.sort(key=lambda x: x[1], reverse=True)
     # Render the template with the sorted data
     return render_template('high_scores.html', rows=rows)
-    
+
+
 if __name__ == '__main__':
     app.run(debug=True)
