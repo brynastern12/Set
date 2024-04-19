@@ -38,17 +38,19 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>High Score</th>
+                <th>Time</th>
+				<th>Date</th>
             </tr>
         </thead>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+		<tbody>
+			{% for row in rows %}
+			<tr>
+				<td>{{ row[0] }}</td>  <!-- Display the 'Name' column -->
+				<td>{{ row[1] }}</td>  <!-- Display the 'Time' column -->
+				<td>{{ row[2] }}</td>  <!-- Display the 'Date' column -->
+			</tr>
+			{% endfor %}
+		</tbody>
     </table>
     <br>
 	<form method="GET" action="/">
