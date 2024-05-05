@@ -1,20 +1,47 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Flask App</title>
-    <!-- Include any necessary CSS or stylesheets here -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Game</title>
     <style>
-        #stopwatch {
-            font-size: 24px;
-            margin-top: 20px;
+        .grid-container-box {
+            border: 2px solid #f0f0f0; /* Add a border with black color */
+            border-bottom: none; /* Remove bottom border */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect on bottom */
+            padding: 10px; /* Add padding to create space between the border and the grid */
+            max-width: 600px; /* Optionally, set a maximum width for the container */
+            margin: 0 auto; /* Center the container horizontally */
+            border-radius: 10px; /* Rounded corners */
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .grid-item img {
+            width: 100%;
+            height: auto;
+            border: 2px solid gray; /* Add a gray border */
+            border-radius: 5px; /* Optionally, add border radius for rounded corners */
+        }
+        .grid-item img.selected {
+            border-color: purple; /* Change border color to indicate selection */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 1.0); /* Add shadow effect */
         }
     </style>
 </head>
 <body>
-    <h1>Let's Play Set!</h1>
-	<form method="GET" action="/">
-		<button type="submit">Return to Home Page</button>
-	</form>
+    <!-- Place your content here -->
+
+    <!-- Image grid -->
+    <div class="image-grid">
+        {% for image_url in image_urls %}
+            <img src="{{ url_for('static', filename=image_url) }}" alt="Card Image">
+        {% endfor %}
+    </div>
 
     <!-- Stopwatch -->
     <div id="stopwatch">00:00:00</div>
@@ -46,5 +73,8 @@
         // Start the stopwatch when the page loads
         var intervalId = startStopwatch();
     </script>
+	<form method="GET" action="/">
+		<button type="submit">Return to Home Page</button>
+	</form>
 </body>
 </html>
