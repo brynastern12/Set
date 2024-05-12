@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import Flask, request, jsonify
 import requests
 from babel.dates import format_datetime
 from flask import Flask, render_template
@@ -223,7 +224,140 @@ def my_logic():
         "YSS2.jpg",
         "YSS3.jpg"         
     ]
-    image_urls = ['images/' + name for name in all_image_urls]
-    # Select a random sample of 12 images
-    random_image_urls = random.sample(image_urls, 12)
-    return render_template('play.html', image_urls=random_image_urls)
+    # Define attributes for each image
+    image_attributes = {
+        'BEC1.jpg': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'},
+        'BEC2.jpg': {'number': 2, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'},
+        'BEC3.jpg': {'number': 3, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'},
+        'BEP1.jpg': {'number': 1, 'color': 'blue', 'shape': 'pentagon', 'shading': 'empty'},
+        'BEP2.jpg': {'number': 2, 'color': 'blue', 'shape': 'pentagon', 'shading': 'empty'},
+        'BEP3.jpg': {'number': 3, 'color': 'blue', 'shape': 'pentagon', 'shading': 'empty'},
+        'BES1.jpg': {'number': 1, 'color': 'blue', 'shape': 'square', 'shading': 'empty'},
+        'BES2.jpg': {'number': 2, 'color': 'blue', 'shape': 'square', 'shading': 'empty'},
+        'BES3.jpg': {'number': 3, 'color': 'blue', 'shape': 'square', 'shading': 'empty'},
+        'BFC1.jpg': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'solid'},
+        'BFC2.jpg': {'number': 2, 'color': 'blue', 'shape': 'circle', 'shading': 'solid'},
+        'BFC3.jpg': {'number': 3, 'color': 'blue', 'shape': 'circle', 'shading': 'solid'},
+        'BFP1.jpg': {'number': 1, 'color': 'blue', 'shape': 'pentagon', 'shading': 'solid'},
+        'BFP2.jpg': {'number': 2, 'color': 'blue', 'shape': 'pentagon', 'shading': 'solid'},
+        'BFP3.jpg': {'number': 3, 'color': 'blue', 'shape': 'pentagon', 'shading': 'solid'},
+        'BFS1.jpg': {'number': 1, 'color': 'blue', 'shape': 'square', 'shading': 'solid'},
+        'BFS2.jpg': {'number': 2, 'color': 'blue', 'shape': 'square', 'shading': 'solid'},
+        'BFS3.jpg': {'number': 3, 'color': 'blue', 'shape': 'square', 'shading': 'solid'},
+        'BSC1.jpg': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'shaded'},
+        'BSC2.jpg': {'number': 2, 'color': 'blue', 'shape': 'circle', 'shading': 'shaded'},
+        'BSC3.jpg': {'number': 3, 'color': 'blue', 'shape': 'circle', 'shading': 'shaded'},
+        'BSP1.jpg': {'number': 1, 'color': 'blue', 'shape': 'pentagon', 'shading': 'shaded'},
+        'BSP2.jpg': {'number': 2, 'color': 'blue', 'shape': 'pentagon', 'shading': 'shaded'},
+        'BSP3.jpg': {'number': 3, 'color': 'blue', 'shape': 'pentagon', 'shading': 'shaded'},
+        'BSS1.jpg': {'number': 1, 'color': 'blue', 'shape': 'square', 'shading': 'shaded'},
+        'BSS2.jpg': {'number': 2, 'color': 'blue', 'shape': 'square', 'shading': 'shaded'},
+        'BSS3.jpg': {'number': 3, 'color': 'blue', 'shape': 'square', 'shading': 'shaded'}, 
+        'REC1.jpg': {'number': 1, 'color': 'red', 'shape': 'circle', 'shading': 'empty'},
+        'REC2.jpg': {'number': 2, 'color': 'red', 'shape': 'circle', 'shading': 'empty'},
+        'REC3.jpg': {'number': 3, 'color': 'red', 'shape': 'circle', 'shading': 'empty'},
+        'REP1.jpg': {'number': 1, 'color': 'red', 'shape': 'pentagon', 'shading': 'empty'},
+        'REP2.jpg': {'number': 2, 'color': 'red', 'shape': 'pentagon', 'shading': 'empty'},
+        'REP3.jpg': {'number': 3, 'color': 'red', 'shape': 'pentagon', 'shading': 'empty'},
+        'RES1.jpg': {'number': 1, 'color': 'red', 'shape': 'square', 'shading': 'empty'},
+        'RES2.jpg': {'number': 2, 'color': 'red', 'shape': 'square', 'shading': 'empty'},
+        'RES3.jpg': {'number': 3, 'color': 'red', 'shape': 'square', 'shading': 'empty'},
+        'RFC1.jpg': {'number': 1, 'color': 'red', 'shape': 'circle', 'shading': 'solid'},
+        'RFC2.jpg': {'number': 2, 'color': 'red', 'shape': 'circle', 'shading': 'solid'},
+        'RFC3.jpg': {'number': 3, 'color': 'red', 'shape': 'circle', 'shading': 'solid'},
+        'RFP1.jpg': {'number': 1, 'color': 'red', 'shape': 'pentagon', 'shading': 'solid'},
+        'RFP2.jpg': {'number': 2, 'color': 'red', 'shape': 'pentagon', 'shading': 'solid'},
+        'RFP3.jpg': {'number': 3, 'color': 'red', 'shape': 'pentagon', 'shading': 'solid'},
+        'RFS1.jpg': {'number': 1, 'color': 'red', 'shape': 'square', 'shading': 'solid'},
+        'RFS2.jpg': {'number': 2, 'color': 'red', 'shape': 'square', 'shading': 'solid'},
+        'RFS3.jpg': {'number': 3, 'color': 'red', 'shape': 'square', 'shading': 'solid'},
+        'RSC1.jpg': {'number': 1, 'color': 'red', 'shape': 'circle', 'shading': 'shaded'},
+        'RSC2.jpg': {'number': 2, 'color': 'red', 'shape': 'circle', 'shading': 'shaded'},
+        'RSC3.jpg': {'number': 3, 'color': 'red', 'shape': 'circle', 'shading': 'shaded'},
+        'RSP1.jpg': {'number': 1, 'color': 'red', 'shape': 'pentagon', 'shading': 'shaded'},
+        'RSP2.jpg': {'number': 2, 'color': 'red', 'shape': 'pentagon', 'shading': 'shaded'},
+        'RSP3.jpg': {'number': 3, 'color': 'red', 'shape': 'pentagon', 'shading': 'shaded'},
+        'RSS1.jpg': {'number': 1, 'color': 'red', 'shape': 'square', 'shading': 'shaded'},
+        'RSS2.jpg': {'number': 2, 'color': 'red', 'shape': 'square', 'shading': 'shaded'},
+        'RSS3.jpg': {'number': 3, 'color': 'red', 'shape': 'square', 'shading': 'shaded'},  
+        'YEC1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'circle', 'shading': 'empty'},
+        'YEC2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'circle', 'shading': 'empty'},
+        'YEC3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'circle', 'shading': 'empty'},
+        'YEP1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'empty'},
+        'YEP2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'empty'},
+        'YEP3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'empty'},
+        'YES1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'empty'},
+        'YES2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'square', 'shading': 'empty'},
+        'YES3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'square', 'shading': 'empty'},
+        'YFC1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'circle', 'shading': 'solid'},
+        'YFC2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'circle', 'shading': 'solid'},
+        'YFC3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'circle', 'shading': 'solid'},
+        'YFP1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'solid'},
+        'YFP2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'solid'},
+        'YFP3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'solid'},
+        'YFS1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'solid'},
+        'YFS2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'square', 'shading': 'solid'},
+        'YFS3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'square', 'shading': 'solid'},
+        'YSC1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'circle', 'shading': 'shaded'},
+        'YSC2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'circle', 'shading': 'shaded'},
+        'YSC3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'circle', 'shading': 'shaded'},
+        'YSP1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'},
+        'YSP2.jpg': {'number': 2, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'},
+        'YSP3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'},
+        'YSS1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'},
+        'YSS2.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'},
+        'YSS3.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'},
+    }
+
+    image_urls = [name for name in all_image_urls]
+    image_urls = list(image_attributes.keys())
+
+    # Select a random sample of image URLs and their attributes
+    random_images = random.sample(list(image_attributes.items()), 12)
+    print(random_images)
+
+    # Now you have a list of random image URLs, and you can access their attributes from the image_attributes dictionary
+#    for url in random_image_urls:
+ #       attributes = image_attributes[url]
+        
+    # Pass image urls and attributes to the HTML template
+    return render_template('play.html', random_images=random_images)
+    
+def is_set(card1, card2, card3):
+        
+        
+    def is_property_set(prop1, prop2, prop3):
+        return (prop1 == prop2 == prop3) or (prop1 != prop2 != prop3 != prop1)
+
+
+    is_number_set = is_property_set(card1['number'], card2['number'], card3['number'])
+    is_color_set = is_property_set(card1['color'], card2['color'], card3['color'])
+    is_shape_set = is_property_set(card1['shape'], card2['shape'], card3['shape'])
+    is_shading_set = is_property_set(card1['shading'], card2['shading'], card3['shading'])
+        
+    # Check if all properties form a Set
+    return is_number_set and is_color_set and is_shape_set and is_shading_set
+    
+@app.route('/check_set', methods=['POST'])
+def check_set():
+    # Receive the attributes of the three selected cards from the frontend
+    data = request.get_json()
+    if isinstance(data, list) and len(data) == 3:
+        card1 = data[0]
+        card2 = data[1]
+        card3 = data[2]
+
+        # Check if the selected cards form a set
+        if is_set(card1, card2, card3):
+            # If a set is found, return 'set' to the frontend
+            return jsonify({'message': 'set'})
+        else:
+            # If no set is found, return 'not_set' to the frontend
+            return jsonify({'message': 'not_set'})
+    else:
+        # If the data is not in the expected format, return an error message
+        return jsonify({'message': 'invalid_data_format'})
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
