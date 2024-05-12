@@ -32,34 +32,90 @@
 
         }
     </style>
-	<script>
-		var selectedCount = 0; // Variable to keep track of selected cards count
+	 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	    <script>
+        var selectedCount = 0; // Variable to keep track of selected cards count
 
-		function toggleSelection(event) {
-			event.preventDefault(); // Prevent the default link behavior
-			var image = event.target; // Get the clicked image element
-			
-			// Check if less than 3 images are selected or if the clicked image is already selected
-			if (selectedCount < 3 || image.classList.contains('selected')) {
-				// Toggle the 'selected' class on the clicked image
-				image.classList.toggle('selected');
-				// Update the selected count based on the current state of the clicked image
-				selectedCount += image.classList.contains('selected') ? 1 : -1;
-			} else {
-				alert("You can only select up to 3 images."); // Show an alert if trying to select more than 3 images
-			}
-		}
-	</script>
+        function toggleSelection(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            event.stopPropagation(); // Prevent the event from bubbling up the DOM tree
+            var image = event.target; // Get the clicked image element
 
+            // Check if less than 3 images are selected or if the clicked image is already selected
+            if (selectedCount < 3 || image.classList.contains('selected')) {
+                // Toggle the 'selected' class on the clicked image
+                image.classList.toggle('selected');
+                // Update the selected count based on the current state of the clicked image
+                selectedCount += image.classList.contains('selected') ? 1 : -1;
+
+                // Check if the number of selected cards is 3
+                if (selectedCount === 3) {
+                    // Automatically check for a set
+                    checkSet();
+                }
+            } else {
+                alert("You can only select up to 3 images."); // Show an alert if trying to select more than 3 images
+            }
+        }
+
+        function checkSet() {
+            var selectedImages = document.querySelectorAll('.grid-item img.selected');
+            if (selectedImages.length === 3) {
+                var attributes = [];
+                selectedImages.forEach(function(image) {
+                    attributes.push({
+                        color: image.dataset.color,
+                        number: image.dataset.number,
+                        shape: image.dataset.shape,
+                        shading: image.dataset.shading
+                    });
+                });
+
+               /* $.ajax({
+                    url: '/check_set',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(attributes),
+                    success: function(response) {
+                        if (response.message === 'set') {
+                            alert('Set!');
+                        }
+                    }
+                });*/
+				
+				$.ajax({
+					url: '/check_set',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(attributes),
+					success: function(response) {
+						if (response.message === 'set') {
+							// Remove message box
+							$('.message-box').remove();
+							// Remove selected cards
+							selectedImages.forEach(function(image) {
+								image.parentNode.parentNode.remove();
+							});
+							selectedCount = 0;
+						}
+					}
+				});
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Set Game</h1>
     <div class="grid-container-box">
         <div class="grid-container">
-            {% for image_url in image_urls %}
+            {% for image_url, attributes in random_images %}
                 <div class="grid-item">
                     <a href="#" onclick="toggleSelection(event)">
-                        <img src="{{ url_for('static', filename=image_url) }}" alt="Image">
+                        <img src="{{ url_for('static', filename='images/' + image_url) }}" alt="Image"
+                             data-color="{{ attributes['color'] }}"
+                             data-number="{{ attributes['number'] }}"
+                             data-shape="{{ attributes['shape'] }}"
+                             data-shading="{{ attributes['shading'] }}">
                     </a>
                 </div>
             {% endfor %}
