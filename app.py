@@ -10,11 +10,90 @@ import dateutil.parser
 from setLogic1 import logic 
 #from db import create_table
 
+# Define your card deck
+card_deck = [
+    {'image_url': 'BEC1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'BEC2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'}},    {'image_url': 'BEC3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'BEP1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'BEP2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'BEP3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'BES1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'square', 'shading': 'empty'}},        {'image_url': 'BES2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'BES3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'BFC1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'BFC2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'BFC3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'BFP1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'BFP2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'BFP3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'BFS1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'BFS2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'BFS3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'BSC1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'BSC2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'BSC3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'BSP1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'BSP2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'BSP3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'BSS1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'square', 'shading': 'shaded'}},
+    {'image_url': 'BSS2.jpg', 'attributes': {'number': 2, 'color': 'blue', 'shape': 'square', 'shading': 'shaded'}},
+    {'image_url': 'BSS3.jpg', 'attributes': {'number': 3, 'color': 'blue', 'shape': 'square', 'shading': 'shaded'}}, 
+    {'image_url': 'REC1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'REC2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'REC3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'REP1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'REP2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'REP3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'RES1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'RES2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'RES3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'RFC1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'RFC2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'RFC3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'RFP1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'RFP2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'RFP3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'RFS1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'RFS2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'RFS3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'RSC1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'RSC2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'RSC3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'RSP1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'RSP2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'RSP3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'RSS1.jpg', 'attributes': {'number': 1, 'color': 'red', 'shape': 'square', 'shading': 'shaded'}},
+    {'image_url': 'RSS2.jpg', 'attributes': {'number': 2, 'color': 'red', 'shape': 'square', 'shading': 'shaded'}},
+    {'image_url': 'RSS3.jpg', 'attributes': {'number': 3, 'color': 'red', 'shape': 'square', 'shading': 'shaded'}},  
+    {'image_url': 'YEC1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'YEC2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'YEC3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'circle', 'shading': 'empty'}},
+    {'image_url': 'YEP1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'YEP2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'YEP3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'empty'}},
+    {'image_url': 'YES1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'YES2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'YES3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'square', 'shading': 'empty'}},
+    {'image_url': 'YFC1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'YFC2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'YFC3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'circle', 'shading': 'solid'}},
+    {'image_url': 'YFP1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'YFP2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'YFP3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'solid'}},
+    {'image_url': 'YFS1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'YFS2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'YFS3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'square', 'shading': 'solid'}},
+    {'image_url': 'YSC1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'YSC2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'YSC3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'circle', 'shading': 'shaded'}},
+    {'image_url': 'YSP1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'YSP2.jpg', 'attributes': {'number': 2, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'YSP3.jpg', 'attributes': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'}},
+    {'image_url': 'YSS1.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'}},
+    {'image_url': 'YSS2.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'}},
+    {'image_url': 'YSS3.jpg', 'attributes': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'}}
+]
+
 app = Flask(__name__)
-
-print("Static URL Path:", app.static_url_path)
-print("Static Folder:", app.static_folder)
-
 
 
 TIME_API_URL_Israel = 'https://timeapi.io/api/Time/current/zone?timeZone=Israel'
@@ -139,6 +218,7 @@ def hello():
 # Define route to render game page
 @app.route('/play')
 def my_logic():
+    global card_deck #declare card_deck as a global variable
 
    # You will populate image_urls here
     all_image_urls = [
@@ -306,26 +386,23 @@ def my_logic():
         'YSP3.jpg': {'number': 3, 'color': 'yellow', 'shape': 'pentagon', 'shading': 'shaded'},
         'YSS1.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'},
         'YSS2.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'},
-        'YSS3.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'},
+        'YSS3.jpg': {'number': 1, 'color': 'yellow', 'shape': 'square', 'shading': 'shaded'}
     }
 
     image_urls = [name for name in all_image_urls]
     image_urls = list(image_attributes.keys())
 
-    # Select a random sample of image URLs and their attributes
-    random_images = random.sample(list(image_attributes.items()), 12)
-    print(random_images)
-
-    # Now you have a list of random image URLs, and you can access their attributes from the image_attributes dictionary
-#    for url in random_image_urls:
- #       attributes = image_attributes[url]
+    #Shuffle deck
+    random.shuffle(card_deck)
+    #Select the first twelve cards from the deck
+    random_images = card_deck[:12]
+    #remove selected cards from deck
+    card_deck = card_deck[12:]
         
     # Pass image urls and attributes to the HTML template
     return render_template('play.html', random_images=random_images)
     
 def is_set(card1, card2, card3):
-        
-        
     def is_property_set(prop1, prop2, prop3):
         return (prop1 == prop2 == prop3) or (prop1 != prop2 != prop3 != prop1)
 
