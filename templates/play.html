@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +6,7 @@
     <title>Set Game</title>
     <style>
         .grid-container-box {
-            border: 2px solid #f0f0f0; /* Add a border with black color */
+            border: 2px solid #f0f0f0;; /* Add a border with black color */
             border-bottom: none; /* Remove bottom border */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect on bottom */
             padding: 10px; /* Add padding to create space between the border and the grid */
@@ -31,16 +29,94 @@
             border-color: purple; /* Change border color to indicate selection */
             box-shadow: 0 0 10px rgba(0, 0, 0, 1.0); /* Add shadow effect */
         }
+		.attributes-hidden {
+			display: none; /* Hide the container */
+		}
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var selectedCount = 0; // Variable to keep track of selected cards count
+
+        function toggleSelection(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            event.stopPropagation(); // Prevent the event from bubbling up the DOM tree
+            var image = event.target; // Get the clicked image element
+
+            // Check if less than 3 images are selected or if the clicked image is already selected
+            if (selectedCount < 3 || image.classList.contains('selected')) {
+                // Toggle the 'selected' class on the clicked image
+                image.classList.toggle('selected');
+                // Update the selected count based on the current state of the clicked image
+                selectedCount += image.classList.contains('selected') ? 1 : -1;
+
+                // Check if the number of selected cards is 3
+                if (selectedCount === 3) {
+                    // Automatically check for a set
+                    checkSet();
+                }
+            } else {
+                alert("You can only select up to 3 images."); // Show an alert if trying to select more than 3 images
+            }
+        }
+        function checkSet() {
+            var selectedImages = document.querySelectorAll('.grid-item img.selected');
+            if (selectedImages.length === 3) {
+                var attributes = [];
+                selectedImages.forEach(function(image) {
+                    attributes.push({
+                        color: image.dataset.color,
+                        number: image.dataset.number,
+                        shape: image.dataset.shape,
+                        shading: image.dataset.shading
+                    });
+                });
+
+                $.ajax({
+                    url: '/check_set',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(attributes),
+                    success: function(response) {
+                        if (response.message === 'set') {
+                            // Remove selected cards
+                            selectedImages.forEach(function(image) {
+                                image.parentNode.parentNode.remove();
+                            });
+                            selectedCount = 0;
+                        } else {
+                            console.log("Not a set.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX request failed:", status, error);
+                    }
+                });
+            }
+        }
+    </script>
 </head>
 <body>
-    <!-- Place your content here -->
-
-    <!-- Image grid -->
-    <div class="image-grid">
-        {% for image_url in image_urls %}
-            <img src="{{ url_for('static', filename=image_url) }}" alt="Card Image">
-        {% endfor %}
+    <h1>Set Game</h1>
+    <div class="grid-container-box">
+        <div class="grid-container">
+            {% for filename, attributes in random_images %}
+            <div class="grid-item">
+                <a href="#" onclick="toggleSelection(event)">
+                    <img src="{{ url_for('static', filename='images/' + filename) }}" alt="Image"
+                         data-color="{{ attributes.color }}"
+                         data-number="{{ attributes.number }}"
+                         data-shape="{{ attributes.shape }}"
+                         data-shading="{{ attributes.shading }}">
+                </a>
+				<div class="attributes-hidden"> <!-- Container for hidden attributes -->
+					<p>Number: {{ attributes.number }}</p>
+					<p>Color: {{ attributes.color }}</p>
+					<p>Shape: {{ attributes.shape }}</p>
+					<p>Shading: {{ attributes.shading }}</p>
+				</div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <!-- Stopwatch -->
@@ -73,8 +149,9 @@
         // Start the stopwatch when the page loads
         var intervalId = startStopwatch();
     </script>
-	<form method="GET" action="/">
-		<button type="submit">Return to Home Page</button>
-	</form>
+
+    <form method="GET" action="/">
+        <button type="submit">Return to Home Page</button>
+    </form>
 </body>
 </html>
