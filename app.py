@@ -437,7 +437,15 @@ def check_set():
     else:
         # If the data is not in the expected format, return an error message
         return jsonify({'message': 'invalid_data_format'})
-
+@app.route('/get_random_cards', methods=['GET'])
+def get_random_cards():
+    global card_deck
+    #Select the next three  cards from the deck
+    random_cards = card_deck[:3]
+    #remove selected cards from deck
+    card_deck = card_deck[3:]
+    # Return the random cards as JSON
+    return jsonify(random_cards)
 @app.route('/display_high_scores')
 def display_high_scores():
     # Fetch user high scores from the database
