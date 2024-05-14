@@ -57,45 +57,73 @@
             } else {
                 alert("You can only select up to 3 images."); // Show an alert if trying to select more than 3 images
             }
-        }
-        function checkSet() {
-            var selectedImages = document.querySelectorAll('.grid-item img.selected');
-            if (selectedImages.length === 3) {
-                var attributes = [];
-                selectedImages.forEach(function(image) {
-                    attributes.push({
-                        color: image.dataset.color,
-                        number: image.dataset.number,
-                        shape: image.dataset.shape,
-                        shading: image.dataset.shading
+        }function checkSet() {
+    var selectedImages = document.querySelectorAll('.grid-item img.selected');
+    if (selectedImages.length === 3) {
+        var attributes = [];
+        selectedImages.forEach(function(image) {
+            attributes.push({
+                color: image.dataset.color,
+                number: image.dataset.number,
+                shape: image.dataset.shape,
+                shading: image.dataset.shading
+            });
+        });
+
+        $.ajax({
+            url: '/check_set',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(attributes),
+			success: function(response) {
+				if (response.message === 'set') {
+					// Remove message box
+					$('.message-box').remove();
+
+					// Remove selected cards
+					selectedImages.forEach(function(image) {
+						image.parentNode.parentNode.remove();
+					});
+					selectedCount = 0;
+
+					// Update set count
+					updateSetCount();
+                    // Fetch new random cards to replace the removed ones
+                    $.ajax({
+                        url: '/get_random_cards',
+                        type: 'GET',
+                        success: function(newCards) {
+                            // Append the new cards to the grid container
+                            var gridContainer = $('.grid-container');
+                            newCards.forEach(function(card) {
+                                var imageUrl = card.image_url;
+                                var attributes = card.attributes;
+                                var gridItem = $('<div class="grid-item"></div>');
+                                var image = $('<img>').attr({
+                                    src: "/static/images/" + imageUrl,
+                                    alt: 'Image',
+                                    'data-color': attributes['color'],
+                                    'data-number': attributes['number'],
+                                    'data-shape': attributes['shape'],
+                                    'data-shading': attributes['shading']
+                                }).on('click', function(event) {
+                                    toggleSelection(event);
+                                });
+                                gridItem.append(image);
+                                gridContainer.append(gridItem);
+                            });
+                            $('.grid-container-box').append(gridContainer);
+                        }
                     });
-                });
-
-                $.ajax({
-                    url: '/check_set',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(attributes),
-                    success: function(response) {
-						if (response.message === 'set') {
-							// Remove selected cards
-							selectedImages.forEach(function(image) {
-								image.parentNode.parentNode.remove();
-							});
-							selectedCount = 0;
-
-							// Update set count
-							updateSetCount();
-						} else {
-							console.log("Not a set.");
-						}
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX request failed:", status, error);
-                    }
-                });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX request failed:", status, error);
             }
-        }
+        });
+    }
+}
+
 		function updateSetCount() {
 			setCount++; // Increment set count by 1
 			document.getElementById('set-count').textContent = 'Sets found: ' + setCount; // Update set count display
