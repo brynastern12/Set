@@ -1,14 +1,18 @@
-from flask import Flask
-from flask import Flask, request, jsonify
-from flask import Flask, render_template
+from flask import Flask, request, jsonify, render_template
+from datetime import datetime as dt
 import random
-import requests
-from babel.dates import format_datetime
 import datetime
+import requests
+import pymysql
 import pytz
 import dateutil.parser
-from db import get_db_connection, create_table
 
+app = Flask(__name__)
+
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWORD = 'mazaliLAZAR8'
+DB_NAME = 'SET_DATABASE_REAL' 
 # Define your card deck
 card_deck = [
     {'image_url': 'BEC1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'}},
@@ -93,10 +97,12 @@ card_deck = [
 ]
 
 
-app = Flask(__name__)
 
 TIME_API_URL_Israel = 'https://timeapi.io/api/Time/current/zone?timeZone=Israel'
 TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=America/New_York'
+# Function to get a database connection
+def get_db_connection():
+    return pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_NAME, cursorclass=pymysql.cursors.DictCursor)
 
 def get_israel_time():
     try:
@@ -176,37 +182,24 @@ shapes = ['diamond', 'squiggle', 'oval']
 shadings = ['solid', 'striped', 'outlined']
 numbers = [1, 2, 3]
 
-def fetch_user_high_scores():
-    # Connect to the database
-    conn = get_db_connection()
-    cursor = conn.cursor()
 
-    # Fetch data from the 'Users' table
-    cursor.execute('SELECT Name, Time, Date FROM Users')  # Assuming 'Time' column contains time data
-    rows = cursor.fetchall()
-
-    # Format the time data to display only minutes and seconds
-    formatted_rows = [(name, format_time(time), date) for name, time, date in rows]
-
-    # Close the database connection
-    conn.close()
-
-    return formatted_rows
 def format_time(time):
     try:
         # Split the time string into components
         components = time.split(':')
         # Extract minutes and seconds
-        minutes = int(components[0])
-        seconds = int(components[1])
+        minutes = int(components[1])
+        seconds = int(components[2].split('.')[0])  # Extract seconds and remove milliseconds
         # Return formatted time as 'MM:SS'
         return f"{minutes:02d}:{seconds:02d}"
-    except ValueError:
-        return '00:00'  # Return default value if time format is invalid
+    except (ValueError, IndexError):
+        return '00:00'  # Return default value if time format is invalid or incomplete
+
 
 
 @app.route('/')
 def hello():
+    create_table()
     israel_time = get_israel_time()
     israel_date = get_israel_date()
     ny_time = get_ny_time()
@@ -446,15 +439,72 @@ def get_random_cards():
     card_deck = card_deck[3:]
     # Return the random cards as JSON
     return jsonify(random_cards)
+    
 @app.route('/display_high_scores')
 def display_high_scores():
-    # Fetch user high scores from the database
-    rows = fetch_user_high_scores()
-
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM Users ORDER BY Number_Of_Sets DESC")
+    rows = cursor.fetchall()
+    print("Fetched Rows:", rows)
+    conn.close()
+    
     # Render the template with the retrieved data
     return render_template('high_scores.html', rows=rows)
 
+# Route to save game data
+@app.route('/save_game_data', methods=['POST'])
+def save_game_data():
+    data = request.json  # Get the JSON data sent from the client
+    # Extract data from the JSON request
+    user_name = data['user_name']
+    date = data['date']
+    date_str = data['date']
+    date_only_str = date_str.split('T')[0]
+    time_elapsed = data['time_elapsed']
+    sets_found = data['sets_found']
 
+    conn = get_db_connection()  # Connect to the database
+    cursor = conn.cursor()  # Create a cursor object
+
+    # Insert the game data into the 'Users' table
+    cursor.execute("INSERT INTO Users (Name, Date, Time, Number_Of_Sets) VALUES (%s, %s, %s, %s)", (user_name, date_only_str, time_elapsed, sets_found))
+
+    conn.commit()  # Commit the transaction
+    conn.close()  # Close the database connection
+
+    return jsonify({'message': 'Game data saved successfully'})
+
+
+def create_table():
+    conn = get_db_connection()
+    print("Database connection created successfully!")  # Debug statement
+    cursor = conn.cursor()
+
+    # Check if the 'Users' table already exists
+    cursor.execute("SHOW TABLES LIKE 'Users'")
+    table_exists = cursor.fetchone() is not None
+
+    if not table_exists:
+        # Create the 'Users' table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE Users (
+                ID INT AUTO_INCREMENT PRIMARY KEY,
+                Name VARCHAR(255),
+                Date DATE,
+                Time TIME,
+                Number_Of_Sets INT
+            )
+        ''')
+        print("Table 'Users' created successfully!")
+    else:
+        print("Table 'Users' already exists. No action taken.")
+
+    conn.commit()
+    conn.close()
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
+
