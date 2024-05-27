@@ -33,7 +33,7 @@
 			display: none; /* Hide the container */
 		}
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var selectedCount = 0; // Variable to keep track of selected cards count
 		var setCount = 0; // Variable to keep track of set count
@@ -129,6 +129,10 @@
 			document.getElementById('set-count').textContent = 'Sets found: ' + setCount; // Update set count display
 		}
     </script>
+	    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 </head>
 <body>
     <h1>Set Game</h1>
@@ -184,10 +188,92 @@
         // Start the stopwatch when the page loads
         var intervalId = startStopwatch();
     </script>
+
 	<div id="set-count">Sets found: 0</div> <!-- Add an element to display the set count -->
- 
+	 
     <form method="GET" action="/">
         <button type="submit">Return to Home Page</button>
     </form>
+    <!-- Button to end the game -->
+    <form id="endGameForm" method="GET" action="/display_high_scores">
+        <button id="endGameButton" type="submit">End Game</button>
+    </form>
+
+    <!-- Modal for entering user's name -->
+    <div id="myModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Enter Your Name</h2>
+            <input type="text" id="userNameInput" placeholder="Your Name">
+            <button id="submitNameBtn">Submit</button>
+        </div>
+    </div>
+
+    <!-- Include your JavaScript for modal behavior -->
+    <script>
+        // Function to show modal for entering user's name
+// Function to show modal for entering user's name and handle submission
+function showModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+
+    var submitButton = document.getElementById("submitNameBtn");
+
+    submitButton.onclick = function() {
+        var userName = document.getElementById("userNameInput").value.trim();
+        if (userName !== "") {
+            // Prepare data to be sent to the server
+            var data = {
+                user_name: userName,
+                date: new Date().toISOString(), // Current date and time
+                time_elapsed: document.getElementById('stopwatch').textContent, // Time elapsed
+                sets_found: setCount // Number of sets found
+            };
+
+            // Send the data to the server using AJAX
+            $.ajax({
+                url: '/save_game_data', // URL to your server endpoint for saving game data
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    // Redirect the user to the high scores page after saving the data
+                    window.location.href = "/display_high_scores";
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX request failed:", status, error);
+                }
+            });
+
+            modal.style.display = "none"; // Close the modal
+        } else {
+            alert("You must enter your name.");
+        }
+    };
+}
+
+
+        // When the "End Game" button is clicked, show the modal to enter the user's name
+        document.getElementById("endGameForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Show the modal to enter the user's name
+            showModal();
+        });
+
+        // Close the modal when the user clicks on the close button or outside of it
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        };
+
+        window.onclick = function(event) {
+            var modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
 </body>
 </html>

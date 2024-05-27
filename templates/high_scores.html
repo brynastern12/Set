@@ -38,25 +38,26 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Date</th>
                 <th>Time</th>
-				<th>Date</th>
+                <th>Number of Sets</th>
             </tr>
         </thead>
-		<tbody>
-			{% for row in rows %}
-			<tr>
-				<td>{{ row[0] }}</td>  <!-- Display the 'Name' column -->
-				<td>{{ row[1] }}</td>  <!-- Display the 'Time' column -->
-				<td>{{ row[2] }}</td>  <!-- Display the 'Date' column -->
-			</tr>
-			{% endfor %}
-		</tbody>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row['Name'] }}</td>  <!-- Display the 'Name' column -->
+                <td>{{ row['Date'] }}</td>  <!-- Display the 'Date' column -->
+                <td>{{ "{:02d}:{:02d}".format(row['Time'].seconds // 60, row['Time'].seconds % 60) }}</td>  <!-- Display the 'Time' column in MM:SS format -->
+                <td>{{ row['Number_Of_Sets'] }}</td> <!-- Display the 'Number of Sets' column -->
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <br>
-	<form method="GET" action="/">
-		<button type="submit">Return to Home Page</button>
-	</form>
-
-    
+    <form method="GET" action="/">
+        <button type="submit">Return to Home Page</button>
+    </form>
 </body>
 </html>
+
