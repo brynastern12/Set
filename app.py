@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from datetime import datetime as dt
+from sqlalchemy import create_engine, text
 import random
 import datetime
 import requests
@@ -7,12 +8,14 @@ import pymysql
 import pytz
 import dateutil.parser
 
+
+
 app = Flask(__name__)
 
-DB_HOST = 'localhost'
-DB_USER = 'root'
-DB_PASSWORD = 'mazaliLAZAR8'
-DB_NAME = 'SET_DATABASE_REAL' 
+#DB_HOST = 'localhost'
+#DB_USER = 'root'
+#DB_PASSWORD = 'mazaliLAZAR8'
+#DB_NAME = 'SET_DATABASE_REAL' 
 # Define your card deck
 card_deck = [
     {'image_url': 'BEC1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'}},
@@ -100,9 +103,25 @@ card_deck = [
 
 TIME_API_URL_Israel = 'https://timeapi.io/api/Time/current/zone?timeZone=Israel'
 TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=America/New_York'
+# Connection parameters
+DB_HOST = 'database-2.c9waii4o6kzu.us-east-1.rds.amazonaws.com'
+DB_USER = 'admin'
+DB_PASSWORD = 'mazaliLAZAR1'
+DB_NAME = 'SET_DATABASE_REAL'
+
 # Function to get a database connection
 def get_db_connection():
-    return pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_NAME, cursorclass=pymysql.cursors.DictCursor)
+    try:
+        conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME)
+        print("Database connection created successfully on RDS!")
+        return conn
+    except pymysql.Error as e:
+        print("Error: ", e)
+        return None
+
+
+
+
 
 def get_israel_time():
     try:
