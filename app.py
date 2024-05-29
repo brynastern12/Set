@@ -9,13 +9,14 @@ import pytz
 import dateutil.parser
 
 
-
 app = Flask(__name__)
 
-#DB_HOST = 'localhost'
-#DB_USER = 'root'
-#DB_PASSWORD = 'mazaliLAZAR8'
-#DB_NAME = 'SET_DATABASE_REAL' 
+
+#these credentials are for local MySQL workbench
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWORD = 'mazaliLAZAR8'
+DB_NAME = 'SET_DATABASE_REAL' 
 # Define your card deck
 card_deck = [
     {'image_url': 'BEC1.jpg', 'attributes': {'number': 1, 'color': 'blue', 'shape': 'circle', 'shading': 'empty'}},
@@ -104,14 +105,16 @@ card_deck = [
 TIME_API_URL_Israel = 'https://timeapi.io/api/Time/current/zone?timeZone=Israel'
 TIME_API_URL_NY = 'https://timeapi.io/api/Time/current/zone?timeZone=America/New_York'
 # Connection parameters
-DB_HOST = 'database-2.c9waii4o6kzu.us-east-1.rds.amazonaws.com'
-DB_USER = 'admin'
-DB_PASSWORD = 'mazaliLAZAR1'
-DB_NAME = 'SET_DATABASE_REAL'
+# These credentials are for RDS
+#DB_HOST = 'database-2.c9waii4o6kzu.us-east-1.rds.amazonaws.com'
+#DB_USER = 'admin'
+#DB_PASSWORD = 'mazaliLAZAR8'
+#DB_NAME = 'SET_DATABASE_REAL'
 
 # Function to get a database connection
 def get_db_connection():
     try:
+    
         conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME)
         print("Database connection created successfully on RDS!")
         return conn
